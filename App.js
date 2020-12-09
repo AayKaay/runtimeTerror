@@ -24,9 +24,11 @@ export default class App extends React.Component {
   constructor() {
     super()
     this.state = {
-      outerScrollEnabled: true
+      outerScrollEnabled: true,
+	  feature:1
+        }
     }
-  }
+  
 
   verticalScroll = (index) => {
     if (index !== 1) {
@@ -52,11 +54,14 @@ export default class App extends React.Component {
             index={1}
             scrollEnabled={this.state.outerScrollEnabled}
 			onIndexChanged = { () => {
+				
 				if (feature === "object"){
 					feature = "Text Detection";
+					this.state.feature = 0
 				}
 				else {
 					feature = "object";
+					this.state.feature = 1
 				}
 				Speech.speak(feature, {
 				  rate: this.state.rate,
@@ -78,10 +83,10 @@ export default class App extends React.Component {
                 <Text style={styles.text}>Search</Text>
               </View>
               <View style={{ flex: 1 }}>
-                <CameraComponent feature="Object"></CameraComponent>
+                <CameraComponent feature={this.state.feature}></CameraComponent>
               </View>
               <View style={styles.slideDefault}>
-                <CameraComponent feature="Text"></CameraComponent>
+                <CameraComponent feature={this.state.feature}></CameraComponent>
               </View>
             </Swiper>
             <View style={{ flex: 1 }}>

@@ -52,7 +52,7 @@ class CameraComponent extends Component {
 			feature:props.feature
         }
 		this.state.speech.inProgress = true;
-		Speech.speak(this.state.feature, { rate: this.state.rate, });	
+		//Speech.speak(this.state.feature, { rate: this.state.rate, });	
 		this.state.speech.inProgress = false;		
     }
 
@@ -217,11 +217,11 @@ class CameraComponent extends Component {
         const yolo = 123;
 		if(this.state.speech.inProgress != true){	
 			if (this.state.feature == 1){
-				//this.recognizeText(fileId);
+				this.recognizeText(fileId);
 				console.log("OCR")
 			}
 			else{
-				//this.recognize(fileId);
+				this.recognize(fileId);
 				console.log("Image")
 			}
 			
