@@ -65,7 +65,7 @@ export default class App extends React.Component {
           >
 
             <View style={styles.slideDefault}>
-              <Text style={styles.text}>Chat</Text>
+              <Text style={styles.text}>Vavi</Text>
             </View>
             <Swiper
               loop={false}
