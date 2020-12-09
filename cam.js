@@ -1,9 +1,6 @@
 import React, { Component } from "react";
 import {
-    View,
-    Text,
-    StyleSheet,
-	Alert 
+    Animated, View, Text, StyleSheet, Alert 
 } from "react-native";
 import { v4 as uuid } from "uuid";
 import { Camera } from 'expo-camera'
@@ -12,6 +9,8 @@ import { Container, Content, Header, Item, Icon, Input, Button } from 'native-ba
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import { decode } from "base64-arraybuffer";
 import * as Speech from 'expo-speech';
+
+import Swiper from 'react-native-swiper'
 //import * as RNS3 from "react-native-upload-aws-s3";
 //Importing in different style
 
@@ -19,8 +18,8 @@ const AWS = require('aws-sdk');
 var S3 = require("aws-sdk/clients/s3");
 
 // Enter copied or downloaded access ID and secret key here
-const ID = 'AKIAJ6YAGGH3LNRQPNUA';
-const SECRET = '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';
+const ID = 'AKIAIAT3SRQLVG5O4DVQ';
+const SECRET = '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';
 
 const BUCKET_NAME = 'bucketforimageocr';
 //const BUCKET_NAME = 'images-123123321321';
@@ -32,8 +31,32 @@ const s3bucket = new S3({
     signatureVersion: 'v4',
     region: 'ap-south-1',
 });
-
-
+const styless = StyleSheet.create({
+  slideDefault: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  text: {
+    color: 'white',
+    fontSize: 40,
+    fontWeight: 'bold',
+	justifyContent: 'center',
+	alignItems: 'center',
+	fontFamily:'Roboto'
+  },
+  fadingContainer: {
+    paddingVertical: 5,
+    paddingHorizontal: 25,
+    backgroundColor: "lightseagreen"
+  },
+  fadingText: {
+    fontSize: 28,
+    textAlign: "center",
+    margin: 10,
+    color : "#fff"
+  },
+})
 
 class CameraComponent extends Component {
     constructor(props) {
@@ -42,18 +65,16 @@ class CameraComponent extends Component {
 		console.log(props.feature)
         this.state = {
             hasCameraPermission: null, camera: null,
-            type: Camera.Constants.Type.back,
-			
+            type: Camera.Constants.Type.back,			
 			speech : {
 				inProgress: false,
 				pitch: 1,
 				rate: 0.4,
 			},
-			feature:props.feature
+			feature:"Object",
+			fadeAnimation2: new Animated.Value(0),
+			fadeAnimation1: new Animated.Value(0),
         }
-		this.state.speech.inProgress = true;
-		//Speech.speak(this.state.feature, { rate: this.state.rate, });	
-		this.state.speech.inProgress = false;		
     }
 
     async componentWillMount() {
@@ -63,58 +84,14 @@ class CameraComponent extends Component {
         this.setState({ hasCameraPermission: status === 'granted' });
     }
 	
-    uploadFileAsync = async (image) => {
 
-        //const arrayBuffer = decode(image);
-        // const params = {
-        //     Body: arrayBuffer,
-        //     Bucket: BUCKET_NAME,
-        //     Key: 'abc',
-        //     ACL: "public-read",
-        //     ContentEncoding: "utf-8",
-        //     ContentType: "binary",
-        //     // region: 'ap-south-1',
+      
 
-        // };
-        // console.log(s3bucket.config)
-        // //    s3.putObject(params,(err, data)=> {
-        // // 	   if (err) console.log(err, err.stack); // an error occurred
-        // //        else     console.log(data); 
-        // //    });          // successful response
-
-        // console.log(params.Bucket)
-        // s3bucket.upload(params, (err, dataa) => {
-        //     if (err) {
-        //         console.log(err);
-        //         console.log("error in callback");
-        //     }
-        //     console.log('success');
-        //     console.log(dataa);
-
-        // });
-
-
-
-
-
-
-        const options = {
-            keyPrefix: "uploads/",
-            bucket: BUCKET_NAME,
-            // region: "us-east-1",
-            accessKey: ID,
-            secretKey: SECRET,
-            successActionStatus: 201
-        }
+       
         //debugger;
-        const response = await RNS3.put(arrayBuffer, options);
-        if (response.status === 201) {
-            console.log("Success: ", response.body)
-        } else {
-            console.log("Failed to upload image to S3: ", response)
-        }
+      
 
-    }
+    
 
 	recognize = async (fileId) =>{	
 		console.log("Before calling :"+ fileId)
@@ -150,15 +127,16 @@ class CameraComponent extends Component {
 		  x = x+1		  
 		  if(myJson.message != 'Internal server error') {	
 			console.log("Bolay ga");
-			const {message} = myJson;
-			
-			    
+			const {message} = myJson;		    
 			
 			this.state.speech.inProgress = true;
 			Speech.speak(message, {
 				  rate: this.state.rate,
 				});	
 			this.state.speech.inProgress = false;;
+		  }
+		  if(x == 20){
+			  break;
 		  }
 		}
 		while (myJson.message == 'Internal server error'); 		
@@ -242,10 +220,37 @@ class CameraComponent extends Component {
         //debugger;
         this.uploadFileAsync2(data.base64);
     }
-
+	fadeOut1 = () => {
+			Animated.timing(this.state.fadeAnimation1, {
+			  toValue: 0,
+			  duration: 2000,
+			  useNativeDriver: true
+			}).start();
+		  };
+	fadeIn1 = () => {
+		Animated.timing(this.state.fadeAnimation1, {
+		  toValue: 1,
+		  duration: 1,
+		  useNativeDriver: true
+		}).start();
+	};
+	fadeOut2 = () => {
+			Animated.timing(this.state.fadeAnimation2, {
+			  toValue: 0,
+			  duration: 2000,
+			  useNativeDriver: true
+			}).start();
+		  };
+	fadeIn2 = () => {
+		Animated.timing(this.state.fadeAnimation2, {
+		  toValue: 1,
+		  duration: 1,
+		  useNativeDriver: true
+		}).start();
+	};
     render() {
-        var { hasCameraPermission } = this.state
-
+        var { hasCameraPermission } = this.state;
+		
         if (hasCameraPermission === null) {
             return <View />
         }
@@ -254,67 +259,68 @@ class CameraComponent extends Component {
         }
         else {
             return (
-                <View style={{ flex: 1 }}>
-                    <Camera style={{ flex: 1, justifyContent: 'space-between' }} type={this.state.type} ref={(ref) => { this.state.camera = ref }} >
-
-                        <Header searchBar rounded
-                            style={{
-                                position: 'absolute', backgroundColor: 'transparent',
-                                left: 0, top: 0, right: 0, zIndex: 100, alignItems: 'center'
-                            }}
-                        >
-                            <View style={{ flexDirection: 'row', flex: 4 }}>
-                                <Icon name="logo-snapchat" style={{ color: 'white' }} />
-                                <Item style={{ backgroundColor: 'transparent' }}>
-                                    <Icon name="ios-search" style={{ color: 'white', fontSize: 24, fontWeight: 'bold' }}></Icon>
-
-                                    <Input
-                                        placeholder="Search"
-                                        placeholderTextColor="white"
-                                    />
-
-
-                                </Item>
-                            </View>
-
-                            <View style={{ flexDirection: 'row', flex: 2, justifyContent: 'space-around' }}>
-                                <Icon name="ios-flash" style={{ color: 'white', fontWeight: 'bold' }} />
-                                <Icon
-                                    onPress={() => {
-                                        this.setState({
-                                            type: this.state.type === Camera.Constants.Type.back ?
-                                                Camera.Constants.Type.front :
-                                                Camera.Constants.Type.back
-                                        })
-                                    }}
-                                    name="ios-reverse-camera" style={{ color: 'white', fontWeight: 'bold' }} />
-                            </View>
-                        </Header>
-
-                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', paddingHorizontal: 10, marginBottom: 15, alignItems: 'flex-end' }}>
-                            <MaterialCommunityIcons name="message-reply"
-                                style={{ color: 'white', fontSize: 36 }}
-                            ></MaterialCommunityIcons>
+                    <Camera style={{ flex: 1, justifyContent: 'space-between' }} type={this.state.type} ref={(ref) => { this.state.camera = ref }} >	                      
+                       <Header style={{backgroundColor: 'transparent'}}></Header>
+					   <Swiper removeClippedSubviews={true} loop={false} showsPagination={false} onIndexChanged = { (index) => {
+								var speakk="Object Detection";
+								if (index == 0){									
+									this.fadeIn1();
+									
+									this.state.feature = 0;
+									speakk="Object Detection";
+									this.fadeOut1();
+								}
+								else {
+									this.fadeIn2();
+									this.fadeOut2();
+									this.state.feature = 1;
+									speakk="Text Detection";
+								}
+								Speech.speak(speakk, {
+								  rate: this.state.rate,
+								});	
+							console.log("Feature change" )} }>
+							
+							<View style={styless.slideDefault}>
+									<Animated.View
+									  styless={[
+										styless.fadingContainer,
+										{ opacity: this.state.fadeAnimation1 }
+									  ]}
+									>
+									  <Text  style={styless.text}>Object Detection</Text>
+									</Animated.View>								
+								
+							</View>
+							
+							<View style={styless.slideDefault}> 
+									<Animated.View
+									  styless={[
+										styless.fadingContainer,
+										{ opacity: this.state.fadeAnimation2 }
+									  ]}
+									>
+										<Text style={styless.text}>Text Detection</Text>
+									</Animated.View>									
+								
+							</View>
+						
+						</Swiper>
 
                             <View style={{ alignItems: 'center' }}>
-                                <MaterialCommunityIcons name="circle-outline"
-                                    style={{ color: 'white', fontSize: 100 }} onPress={() => {
+                                <MaterialCommunityIcons name="circle-outline"  style={{ color: 'white', fontSize: 100 }} onPress={() => {
                                         this.takePicture().then(() => { }).catch((e) => {
                                             //debugger;
                                             console.log("NAI CHALA")
                                             console.log(e)
                                         })
                                     }}
-                                ></MaterialCommunityIcons>
-                                <Icon name="ios-images" style={{ color: 'white', fontSize: 36 }} />
+                                >
+								</MaterialCommunityIcons>
                             </View>
-                            <MaterialCommunityIcons name="google-circles-communities"
-                                style={{ color: 'white', fontSize: 36 }}
-                            ></MaterialCommunityIcons>
 
-                        </View>
+                       
                     </Camera>
-                </View>
             )
         }
     }

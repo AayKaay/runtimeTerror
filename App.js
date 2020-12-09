@@ -1,6 +1,6 @@
 import React from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-
+import { Camera } from 'expo-camera';
 import * as Speech from 'expo-speech';
 import { Container, Content } from 'native-base'
 import Swiper from 'react-native-swiper'
@@ -11,12 +11,13 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#9DD6EB'
   },
   text: {
     color: 'white',
-    fontSize: 30,
-    fontWeight: 'bold'
+    fontSize: 50,
+    fontWeight: 'bold',
+	justifyContent: 'center',
+	alignItems: 'center',
   }
 })
 export default class App extends React.Component {
@@ -44,57 +45,23 @@ export default class App extends React.Component {
   }
    
   render() {
-	  var feature = "object";
+	  var feature = "Object";
     return (
-      <Container>
-        <Content>
-          <Swiper
-            loop={false}
-            showsPagination={false}
-            index={1}
-            scrollEnabled={this.state.outerScrollEnabled}
-			onIndexChanged = { () => {
+	<View style={{ flex: 1 }}>      
+		<CameraComponent >
+			<Swiper removeClippedSubviews={true} loop={false} showsPagination={false}>
+				<View style={styles.slideDefault}>  
+					<Text  style={styles.text}>Hello</Text>
+					
+				</View>
 				
-				if (feature === "object"){
-					feature = "Text Detection";
-					this.state.feature = 0
-				}
-				else {
-					feature = "object";
-					this.state.feature = 1
-				}
-				Speech.speak(feature, {
-				  rate: this.state.rate,
-				});	
-				console.log("Feature change" )} }
-          >
-
-            <View style={styles.slideDefault}>
-              <Text style={styles.text}>Vavi</Text>
-            </View>
-            <Swiper
-              loop={false}
-              showsPagination={false}
-              horizontal={false}
-              index={1}
-              onIndexChanged={(index) => this.verticalScroll(index)}
-            >
-              <View style={styles.slideDefault}>
-                <Text style={styles.text}>Search</Text>
-              </View>
-              <View style={{ flex: 1 }}>
-                <CameraComponent feature={this.state.feature}></CameraComponent>
-              </View>
-              <View style={styles.slideDefault}>
-                <CameraComponent feature={this.state.feature}></CameraComponent>
-              </View>
-            </Swiper>
-            <View style={{ flex: 1 }}>
-              <CameraComponent feature="Text"></CameraComponent>
-            </View>
-          </Swiper>
-        </Content>
-      </Container>
+				<View style={styles.slideDefault}>  
+					<Text style={styles.text}>Page 2</Text>
+				</View>
+			
+			</Swiper>
+		</CameraComponent>	
+	</View>
     );
   }
 }
