@@ -18,8 +18,8 @@ const AWS = require('aws-sdk');
 var S3 = require("aws-sdk/clients/s3");
 
 // Enter copied or downloaded access ID and secret key here
-const ID = 'AKIAIAT3SRQLVG5O4DVQ';
-const SECRET = '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';
+const ID = 'AKIAIS5JJHEQPEHPY3UQ';
+const SECRET = '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';
 
 const BUCKET_NAME = 'bucketforimageocr';
 //const BUCKET_NAME = 'images-123123321321';
@@ -39,7 +39,7 @@ const styless = StyleSheet.create({
   },
   text: {
     color: 'white',
-    fontSize: 40,
+    fontSize: 35,
     fontWeight: 'bold',
 	justifyContent: 'center',
 	alignItems: 'center',
@@ -51,7 +51,7 @@ const styless = StyleSheet.create({
     backgroundColor: "lightseagreen"
   },
   fadingText: {
-    fontSize: 28,
+    fontSize: 29,
     textAlign: "center",
     margin: 10,
     color : "#fff"
@@ -164,7 +164,7 @@ class CameraComponent extends Component {
 
         const arrayBuffer = decode(base64);
         ////debugger;
-        const fileId = uuid();
+        const fileId = 'image';
         const signedUrlExpireSeconds = 60 * 15;
 
         const url = await s3bucket.getSignedUrlPromise("putObject", {
